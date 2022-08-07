@@ -1,6 +1,9 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,9 +17,24 @@ namespace Business.Concrete
         {
             _prodcutDal = prodcutDal;
         }
-        public List<Product> GetAll()
+
+        public IResult Add(Product product)
         {
-          return  _prodcutDal.GetAll();
+            if (product.ProductName.Length < 2)
+            {
+                return new ErrorResult(Messages.ProductNameInvalid);
+            }
+            else
+            {
+                _prodcutDal.Add(product);
+                return new SuccessResult(Messages.ProductAdded);
+            }
+           
+        }
+
+        public IDataResult2 GetAll()
+        {
+            return new DataResult2(_prodcutDal.GetAll(), "sfdfsdf", true);
         }
 
         public List<Product> GetAllByCategoryId(int categoryId)
@@ -32,6 +50,11 @@ namespace Business.Concrete
         public List<Product> GetByUnitPrice(int categoryId)
         {
             throw new NotImplementedException();
+        }
+
+        public List<ProductDetailDto> GetProductDetails()
+        {
+            return _prodcutDal.GetProductDetails();
         }
     }
 }
